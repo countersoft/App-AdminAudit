@@ -28,11 +28,11 @@ using Countersoft.Foundation.Commons.Core;
 namespace AdminAudit
 {
     [AppType(AppTypeEnum.Event),
-    AppGuid("DA83F146-8C92-49AB-97C1-83EEDCCD3910"),
     AppControlGuid("1D940864-E8FF-4307-A885-514D40BF4518"),
-    AppAuthor("Countersoft"),
-    AppName("Admin Audit"),
-    AppDescription("View a history of all admin actions"),
+    AppGuid(CustomConstants.APPGUID),
+    AppAuthor(CustomConstants.APPAUTHOR),
+    AppName(CustomConstants.APPNAME),
+    AppDescription(CustomConstants.APPDESCRIPTION),
     AppRequiresConfigScreen(true)]
     [OutputCache(Duration = 0, NoStore = true, Location = System.Web.UI.OutputCacheLocation.None)]
     public class PeopleListener : IAfterUserListener, IAfterProjectGroupListener, IAfterPermissionSetListener, IAfterGeminiConfigurationListener

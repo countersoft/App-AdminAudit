@@ -28,11 +28,11 @@ using Countersoft.Gemini.Commons.Permissions;
 namespace AdminAudit
 {
     [AppType(AppTypeEnum.Event),
-    AppGuid("DA83F146-8C92-49AB-97C1-83EEDCCD3910"),
     AppControlGuid("8004A65F-04FC-4656-B52A-908D5FE66B73"),
-    AppAuthor("Countersoft"),
-    AppName("Admin Audit"),
-    AppDescription("View a history of all admin actions"),
+    AppGuid(CustomConstants.APPGUID),
+    AppAuthor(CustomConstants.APPAUTHOR),
+    AppName(CustomConstants.APPNAME),
+    AppDescription(CustomConstants.APPDESCRIPTION),
     AppRequiresConfigScreen(true)]
     [OutputCache(Duration = 0, NoStore = true, Location = System.Web.UI.OutputCacheLocation.None)]
     public class Systemistener : IAfterAlertTemplateListener

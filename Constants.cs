@@ -8,6 +8,15 @@ using Countersoft.Gemini.Commons.Dto;
 
 namespace AdminAudit
 {
+    public class CustomConstants
+    {
+        public const string APPGUID = "DA83F146-8C92-49AB-97C1-83EEDCCD3910";
+        public const string APPAUTHOR = "Countersoft";
+        public const string APPNAME = "Administrator Log";
+        public const string APPDESCRIPTION = "List of all administrative actions performed by Gemini Administrators. Filter by date range or individual users.";
+        
+    }
+
     public enum UserAction
     {
         Created = 1,
@@ -43,7 +52,6 @@ namespace AdminAudit
         SystemEmail = 26,
         SystemAlertTemplates = 27,
         SystemActiveDirectory = 28,
-        SystemLicensing = 29      
-
+        SystemLicensing = 29
     }
 }

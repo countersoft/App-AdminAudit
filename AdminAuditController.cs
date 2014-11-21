@@ -26,12 +26,12 @@ using Countersoft.Foundation.Commons.Core;
 namespace AdminAudit
 {
     [AppType(AppTypeEnum.Config),
-    AppGuid("DA83F146-8C92-49AB-97C1-83EEDCCD3910"),
     AppControlGuid("FF74C706-49BA-4D81-8F4D-A55C26D2CADF"),
-    AppAuthor("Countersoft"),
-    AppName("AdminAudit"),
     AppKey("AdminAudit"),
-    AppDescription("View a history of all admin actions"),
+    AppGuid(CustomConstants.APPGUID),
+    AppAuthor(CustomConstants.APPAUTHOR),
+    AppName(CustomConstants.APPNAME),
+    AppDescription(CustomConstants.APPDESCRIPTION),
     AppRequiresConfigScreen(true)]
     [OutputCache(Duration = 0, NoStore = true, Location = System.Web.UI.OutputCacheLocation.None)]
     public class AdminAuditController : BaseAppController
@@ -65,7 +65,7 @@ namespace AdminAudit
 
             allUsers.Add(allUserDto);
             allUsers.AddRange(UserManager.GetActiveUsers());
-            model.Users = new MultiSelectList(allUsers, "Entity.Id", "Fullname"); ;
+            model.Users = new MultiSelectList(allUsers, "Entity.Id", "Fullname", new List<int> {0}); ;
 
             var result = new WidgetResult();
 

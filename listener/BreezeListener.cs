@@ -28,11 +28,11 @@ using Microsoft.Practices.Unity;
 namespace AdminAudit
 {
     [AppType(AppTypeEnum.Event),
-    AppGuid("DA83F146-8C92-49AB-97C1-83EEDCCD3910"),
     AppControlGuid("F089D78B-08F7-4300-9026-3789B380E9BB"),
-    AppAuthor("Countersoft"),
-    AppName("Admin Audit"),
-    AppDescription("View a history of all admin actions"),
+    AppGuid(CustomConstants.APPGUID),
+    AppAuthor(CustomConstants.APPAUTHOR),
+    AppName(CustomConstants.APPNAME),
+    AppDescription(CustomConstants.APPDESCRIPTION),
     AppRequiresConfigScreen(true)]
     [OutputCache(Duration = 0, NoStore = true, Location = System.Web.UI.OutputCacheLocation.None)]
     public class BreezeListener : IAfterEnquiryQueueListener, IAfterEnquirySmtpServerListener, IAfterEnquiryMailboxListener, IAfterMatchExpressionListener, IAfterBreezeReplyOptionsListener

@@ -26,11 +26,11 @@ using Countersoft.Gemini.Commons.Meta;
 namespace AdminAudit
 {
     [AppType(AppTypeEnum.Event),
-    AppGuid("DA83F146-8C92-49AB-97C1-83EEDCCD3910"),
     AppControlGuid("217A7936-B38C-42EB-99FE-55067BEE0057"),
-    AppAuthor("Countersoft"),
-    AppName("Admin Audit"),
-    AppDescription("View a history of all admin actions"),
+    AppGuid(CustomConstants.APPGUID),
+    AppAuthor(CustomConstants.APPAUTHOR),
+    AppName(CustomConstants.APPNAME),
+    AppDescription(CustomConstants.APPDESCRIPTION),
     AppRequiresConfigScreen(true)]
     [OutputCache(Duration = 0, NoStore = true, Location = System.Web.UI.OutputCacheLocation.None)]
     public class TemplatesListener : IAfterIssueTypeListener, IAfterCustomFieldListener, IAfterIssueStatusListener, IAfterIssuePriorityListener, IAfterIssueSeverityListener, IAfterIssueResolutionListener, IAfterLinkTypeListener, IAfterTimeTypeListener, IAfterProjectTemplateListener
