@@ -57,7 +57,7 @@ namespace AdminAudit
             if (userids == null)
             {
                 query = string.Format(@"select a.id, a.action, a.rowid, a.adminarea, a.rowname, a.fieldchanged, a.valuebefore, a.valueafter, 
-                          a.created, CONCAT(u.firstname,' ', u.surname) as fullname 
+                          a.created, u.firstname + ' ' + u.surname as fullname 
                           from admin_audit a
                           left join gemini_users u ON u.userid = a.userid 
                           where a.created >= '{0}' AND a.created <= '{1}'
@@ -66,7 +66,7 @@ namespace AdminAudit
             else
             {
                 query = string.Format(@"select a.id, a.action, a.rowid, a.adminarea, a.rowname, a.fieldchanged, a.valuebefore, a.valueafter, 
-                          a.created, CONCAT(u.firstname,' ', u.surname) as fullname 
+                          a.created, u.firstname + ' ' + u.surname as fullname 
                           from admin_audit a
                           left join gemini_users u ON u.userid = a.userid 
                           where a.created >= '{0}' AND a.created <= '{1}' AND a.userid in ({2})
@@ -79,7 +79,7 @@ namespace AdminAudit
         public static AdminAuditDto Get(int Id)
         {
             var query = string.Format(@"select a.rowid, a.rowname, a.data, a.id, a.action, a.adminarea, a.fieldchanged, a.valuebefore, a.valueafter, 
-                          a.created, CONCAT(u.firstname,' ', u.surname) as fullname 
+                          a.created, u.firstname + ' ' + u.surname as fullname 
                           from admin_audit a
                           left join gemini_users u ON u.userid = a.userid where a.id = {0} ", Id);
 

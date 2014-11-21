@@ -49,11 +49,6 @@ namespace AdminAudit
 
         public override WidgetResult Configuration()
         {
-            if (!AdminAuditRepository.DoesTableExist())
-            {
-                AdminAuditRepository.CreateAdminAuditTable();
-            }
-
             var model = new AdminAuditModel();
             model.data = AdminAuditRepository.GetAll(DateTime.Today.AddDays(-14), DateTime.Now);
             model.DateFormat = CurrentUser.GeminiDateFormat;
@@ -209,6 +204,17 @@ namespace AdminAudit
 
 
             return JsonSuccess(new { html = RenderPartialViewToString(this, AppManager.Instance.GetAppUrl(AppGuid, "views/_tableData.cshtml"), model) });
+        }
+    }
+
+    public class AdminAuditRoutes : IAppRoutes
+    {
+        public void RegisterRoutes(RouteCollection routes)
+        {
+            if (!AdminAuditRepository.DoesTableExist())
+            {
+                AdminAuditRepository.CreateAdminAuditTable();
+            }
         }
     }
 
