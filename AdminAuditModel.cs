@@ -38,7 +38,8 @@ namespace AdminAudit
                     FieldChanged.Equals("Projectgroupdesc", StringComparison.InvariantCultureIgnoreCase) ||
                     FieldChanged.Equals("Schemedesc", StringComparison.InvariantCultureIgnoreCase) ||
                     FieldChanged.Equals("Longdesc", StringComparison.InvariantCultureIgnoreCase) ||
-                    FieldChanged.Equals("Sladesc", StringComparison.InvariantCultureIgnoreCase)) return "Description";
+                    FieldChanged.Equals("Sladesc", StringComparison.InvariantCultureIgnoreCase) ||
+                    FieldChanged.Equals("organizationdesc", StringComparison.InvariantCultureIgnoreCase)) return "Description";
 
                 if (FieldChanged.Equals("projectid", StringComparison.InvariantCultureIgnoreCase)) return "Project";
                 if (FieldChanged.Equals("projectlabelid", StringComparison.InvariantCultureIgnoreCase) &&

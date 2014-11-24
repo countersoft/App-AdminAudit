@@ -35,7 +35,7 @@ namespace AdminAudit
     AppDescription(CustomConstants.APPDESCRIPTION),
     AppRequiresConfigScreen(true)]
     [OutputCache(Duration = 0, NoStore = true, Location = System.Web.UI.OutputCacheLocation.None)]
-    public class PeopleListener : IAfterUserListener, IAfterProjectGroupListener, IAfterPermissionSetListener, IAfterGeminiConfigurationListener
+    public class PeopleListener : IAfterUserListener, IAfterProjectGroupListener, IAfterPermissionSetListener, IAfterGeminiConfigurationListener, IAfterOrganizationListener
     {
         public string Description { get; set; }
         public string Name { get; set; }
@@ -805,6 +805,83 @@ namespace AdminAudit
         #endregion
 
 
+        #region Organizations
+
+        public void AfterOrganizationCreated(OrganizationEventArgs args)
+        {
+            AdminAuditDto audit = new AdminAuditDto();
+
+            audit.UserId = args.User.Id;
+            audit.RowId = args.Entity.Id;
+            audit.Action = UserAction.Created;
+            audit.AdminArea = AdminAreaVisibility.Organization;
+            audit.RowName = audit.ValueAfter = args.Entity.Name;
+
+            AdminAuditRepository.InsertAudit(audit);
+        }
+
+        public void AfterOrganizationDeleted(OrganizationEventArgs args)
+        {
+            AdminAuditDto audit = new AdminAuditDto();
+
+            audit.UserId = args.User.Id;
+            audit.RowId = args.Previous.Id;
+            audit.Data = args.Previous.ToJson();
+            audit.Action = UserAction.Deleted;
+            audit.AdminArea = AdminAreaVisibility.Organization;
+            audit.RowName = audit.ValueBefore = args.Previous.Name;
+
+            AdminAuditRepository.InsertAudit(audit);
+        }
+
+        public void AfterOrganizationUpdated(OrganizationEventArgs args)
+        {
+            List<Triplet> changedValues = new List<Triplet>();
+
+            if (!args.Previous.Name.Equals(args.Entity.Name))
+            {
+                changedValues.Add(new Triplet() { First = "name", Second = args.Previous.Name, Third = args.Entity.Name });
+            }
+
+            if (!args.Previous.Description.Equals(args.Entity.Description))
+            {
+                changedValues.Add(new Triplet() { First = "organizationdesc", Second = args.Previous.Description, Third = args.Entity.Description });
+            }
+
+            var dateNow = DateTime.Now;
+
+            if (args.Previous.Members.Count > 0) args.Previous.Members.ForEach(s => s.Revised = dateNow);
+            if (args.Entity.Members.Count > 0) args.Entity.Members.ForEach(s => s.Revised = dateNow);
+
+            if (!args.Previous.Members.ToJson().Equals(args.Entity.Members.ToJson()))
+            {
+                var allUsers = args.Context.Users.GetAll();
+
+                var previousUsers = allUsers.Count > 0 && args.Previous.Members.Count > 0 ? allUsers.FindAll(s => args.Previous.Members.Find(a => a.UserId == s.Id) != null).Select(a => a.Fullname).ToDelimited(", ").TrimEnd(' ').TrimEnd(',') : string.Empty;
+                var currentUsers = allUsers.Count > 0 && args.Entity.Members.Count > 0 ? allUsers.FindAll(s => args.Entity.Members.Find(a => a.UserId == s.Id) != null).Select(a => a.Fullname).ToDelimited(", ").TrimEnd(' ').TrimEnd(',') : string.Empty;
+
+
+                changedValues.Add(new Triplet() { First = "members", Second = currentUsers, Third = previousUsers });
+            }
+
+            foreach (var value in changedValues)
+            {
+                AdminAuditDto audit = new AdminAuditDto();
+
+                audit.UserId = args.User.Id;
+                audit.RowId = args.Previous.Id;
+                audit.Action = UserAction.Edited;
+                audit.AdminArea = AdminAreaVisibility.Organization;
+                audit.FieldChanged = value.First.ToString();
+                audit.ValueBefore = value.Second.ToString();
+                audit.ValueAfter = value.Third.ToString();
+                audit.RowName = args.Entity.Name;
+
+                AdminAuditRepository.InsertAudit(audit);
+            }
+        }
+
+        #endregion
     }
 
 }

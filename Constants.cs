@@ -52,6 +52,7 @@ namespace AdminAudit
         SystemEmail = 26,
         SystemAlertTemplates = 27,
         SystemActiveDirectory = 28,
-        SystemLicensing = 29
+        SystemLicensing = 29,
+        Organization = 30
     }
 }

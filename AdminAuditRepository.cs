@@ -16,7 +16,7 @@ namespace AdminAudit
     {
         public static bool DoesTableExist()
         {
-            var query = string.Format("SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG = '{0}' AND  TABLE_NAME = 'admin_audit'", GetCurrentDatabaseName());
+            var query = string.Format("SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'admin_audit'");
 
             var result = SQLService.Instance.RunQuery<int>(query);
 
@@ -37,7 +37,14 @@ namespace AdminAudit
 	                                    [valuebefore] [nvarchar](max) NOT NULL,
 	                                    [valueafter] [nvarchar](max) NOT NULL,
 	                                    [created] [datetime] NOT NULL default GETDATE()
-                                    )";
+                                    )
+                                    CREATE INDEX admin_audit_created
+                                    ON admin_audit (created)
+
+                                    CREATE INDEX admin_audit_userid
+                                    ON admin_audit (userid)
+                                    ";
+
 
             return SQLService.Instance.ExecuteQuery(createTableQuery);
         }
@@ -106,15 +113,6 @@ namespace AdminAudit
             return false;
         }
 
-        public static string GetCurrentDatabaseName()
-        {
-            if (ConfigurationManager.ConnectionStrings.Count > 1)
-                return new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings[1].ToString()).InitialCatalog;
-            else if (ConfigurationManager.ConnectionStrings.Count == 1)
-                return new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings[0].ToString()).InitialCatalog;
-            else
-                return "";
-        }
     }
 
 
