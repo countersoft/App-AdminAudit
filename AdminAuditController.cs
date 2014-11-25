@@ -21,6 +21,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using Countersoft.Gemini.Commons.Meta;
 using Countersoft.Foundation.Commons.Core;
+using Countersoft.Gemini.Commons.Entity;
 
 
 namespace AdminAudit
@@ -53,14 +54,16 @@ namespace AdminAudit
             model.data = AdminAuditRepository.GetAll(DateTime.Today.AddDays(-14), DateTime.Now);
             model.DateFormat = CurrentUser.GeminiDateFormat;
 
-            List<UserDto> allUsers = new List<UserDto>();
-            var allUserDto = new UserDto();
-            allUserDto.Fullname = "All Users";                       
-            allUserDto.Entity.Id = 0;
+            List<User> allUsers = new List<User>();
+            var user = new User();
+            user.Firstname = "All";
+            user.Surname = "Users";
+            user.Id = 0;
 
-            allUsers.Add(allUserDto);
-            allUsers.AddRange(UserManager.GetActiveUsers());
-            model.Users = new MultiSelectList(allUsers, "Entity.Id", "Fullname", new List<int> {0}); ;
+            allUsers.Add(user);
+            allUsers.AddRange(UserManager.Cache.Users.GetAll());
+
+            model.Users = new MultiSelectList(allUsers, "Id", "Fullname", new List<int> { 0 }); ;
 
             var result = new WidgetResult();
 
@@ -197,7 +200,7 @@ namespace AdminAudit
 
             if (userids.Contains(0))
             {
-                userids = UserManager.GetActiveUsers().Select(s => s.Entity.Id).ToList();
+                userids = UserManager.Cache.Users.GetAll().Select(s => s.Id).ToList();
             }
 
             model.data = AdminAuditRepository.GetAll(dateFromFormatted.Value, dateToFormatted.Value.AddHours(24), userids);
