@@ -9,6 +9,7 @@ using Countersoft.Gemini.Commons;
 using Countersoft.Gemini.Commons.Dto;
 using Countersoft.Gemini.Extensibility;
 using Countersoft.Gemini.Extensibility.Events;
+using Countersoft.Foundation.Commons.Extensions;
 
 namespace AdminAudit
 {
@@ -27,7 +28,7 @@ namespace AdminAudit
         {
             var createTableQuery = @"CREATE TABLE [dbo].[admin_audit](
 	                                    [id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	                                	[userid] [numeric](18, 0) NOT NULL,
+	                                	[userid] [numeric](10, 0) NOT NULL,
 	                                    [rowid] [int] NOT NULL,
                                         [rowname] [nvarchar](max) NOT NULL,
 	                                    [data][nvarchar](max),
@@ -36,7 +37,7 @@ namespace AdminAudit
 	                                    [fieldchanged] [nvarchar](255) NOT NULL,
 	                                    [valuebefore] [nvarchar](max) NOT NULL,
 	                                    [valueafter] [nvarchar](max) NOT NULL,
-	                                    [created] [datetime] NOT NULL default GETDATE()
+	                                    [created] [datetime] NOT NULL default GETUTCDATE()
                                     )
                                     CREATE INDEX admin_audit_created
                                     ON admin_audit (created)
@@ -51,24 +52,24 @@ namespace AdminAudit
 
         public static int InsertAudit(AdminAuditDto audit)
         {
-            var query = string.Format(@"INSERT INTO admin_audit (userid, rowid, rowname, data, action, adminarea, fieldchanged, valuebefore, valueafter) 
-                values ({0},{1},'{2}','{3}',{4},{5},'{6}','{7}','{8}') ", audit.UserId, audit.RowId, audit.RowName, audit.Data, (int)audit.Action, (int)audit.AdminArea, audit.FieldChanged, audit.ValueBefore, audit.ValueAfter);
+            var query = string.Format(@"INSERT INTO admin_audit (userid, rowid, rowname, data, action, adminarea, fieldchanged, valuebefore, valueafter, created) 
+                values ({0},{1},'{2}','{3}',{4},{5},'{6}','{7}','{8}', @created) ", audit.UserId, audit.RowId, audit.RowName, audit.Data, (int)audit.Action, (int)audit.AdminArea, audit.FieldChanged, audit.ValueBefore, audit.ValueAfter);
 
-            return SQLService.Instance.ExecuteQuery(query);
+            return SQLService.Instance.ExecuteQuery(query, new { created = DateTime.UtcNow });
         }
 
-        public static List<AdminAuditDto> GetAll(DateTime fromDate, DateTime toDate, List<int> userids = null)
+        public static List<AdminAuditDto> GetAll(DateTime fromDate, DateTime toDate, UserContext userContext, List<int> userids = null)
         {
             var query = string.Empty;
 
-            if (userids == null)
+            if (userids == null || userids != null && userids.Count == 0)
             {
-                query = string.Format(@"select a.id, a.action, a.rowid, a.adminarea, a.rowname, a.fieldchanged, a.valuebefore, a.valueafter, 
+                query =   @"select a.id, a.action, a.rowid, a.adminarea, a.rowname, a.fieldchanged, a.valuebefore, a.valueafter, 
                           a.created, u.firstname + ' ' + u.surname as fullname 
                           from admin_audit a
                           left join gemini_users u ON u.userid = a.userid 
-                          where a.created >= '{0}' AND a.created <= '{1}'
-                          ORDER BY a.created desc", fromDate.ToString("yyyy-MM-dd H:mm:ss"), toDate.ToString("yyyy-MM-dd H:mm:ss"));
+                          where a.created >= @fromDate AND a.created <= @toDate
+                          ORDER BY a.created desc";
             }
             else
             {
@@ -76,14 +77,21 @@ namespace AdminAudit
                           a.created, u.firstname + ' ' + u.surname as fullname 
                           from admin_audit a
                           left join gemini_users u ON u.userid = a.userid 
-                          where a.created >= '{0}' AND a.created <= '{1}' AND a.userid in ({2})
-                          ORDER BY a.created desc", fromDate.ToString("yyyy-MM-dd H:mm:ss"), toDate.ToString("yyyy-MM-dd H:mm:ss"), string.Join(",", userids));
+                          where a.created >= @fromDate AND a.created <= @toDate AND a.userid in ({0})
+                          ORDER BY a.created desc", string.Join(",", userids));
             }
 
-            return SQLService.Instance.RunQuery<AdminAuditDto>(query).ToList();
+            var result = SQLService.Instance.RunQuery<AdminAuditDto>(query, new { fromDate = fromDate, toDate = toDate }).ToList();
+
+            if (result.Count > 0)
+            {
+                result.ForEach(m => m.Created = m.Created.ToLocal(userContext.User.TimeZone));
+            }
+
+            return result;
         }
 
-        public static AdminAuditDto Get(int Id)
+        public static AdminAuditDto Get(int Id, UserContext userContext)
         {
             var query = string.Format(@"select a.rowid, a.rowname, a.data, a.id, a.action, a.adminarea, a.fieldchanged, a.valuebefore, a.valueafter, 
                           a.created, u.firstname + ' ' + u.surname as fullname 
@@ -91,6 +99,11 @@ namespace AdminAudit
                           left join gemini_users u ON u.userid = a.userid where a.id = {0} ", Id);
 
             var result = SQLService.Instance.RunQuery<AdminAuditDto>(query).ToList();
+
+            if (result.Count > 0)
+            {
+                result.ForEach(m => m.Created = m.Created.ToLocal(userContext.User.TimeZone));
+            }
 
             return result.Count > 0 ? result.First() : null;
         }

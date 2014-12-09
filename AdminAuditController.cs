@@ -51,7 +51,7 @@ namespace AdminAudit
         public override WidgetResult Configuration()
         {
             var model = new AdminAuditModel();
-            model.data = AdminAuditRepository.GetAll(DateTime.Today.AddDays(-14), DateTime.Now);
+            model.data = AdminAuditRepository.GetAll(DateTime.Today.AddDays(-14), DateTime.Now, UserContext);
             model.DateFormat = CurrentUser.GeminiDateFormat;
 
             List<User> allUsers = new List<User>();
@@ -85,7 +85,7 @@ namespace AdminAudit
         {
             try
             {
-                var data = AdminAuditRepository.Get(id);
+                var data = AdminAuditRepository.Get(id, UserContext);
 
                 var query = Helper.CreateRollbackQuery(data);
 
@@ -203,7 +203,7 @@ namespace AdminAudit
                 userids = UserManager.Cache.Users.GetAll().Select(s => s.Id).ToList();
             }
 
-            model.data = AdminAuditRepository.GetAll(dateFromFormatted.Value, dateToFormatted.Value.AddHours(24), userids);
+            model.data = AdminAuditRepository.GetAll(dateFromFormatted.Value, dateToFormatted.Value.AddHours(24), UserContext, userids);
 
 
             return JsonSuccess(new { html = RenderPartialViewToString(this, AppManager.Instance.GetAppUrl(AppGuid, "views/_tableData.cshtml"), model) });
