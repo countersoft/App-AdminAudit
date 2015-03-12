@@ -53,9 +53,9 @@ namespace AdminAudit
         public static int InsertAudit(AdminAuditDto audit)
         {
             var query = string.Format(@"INSERT INTO admin_audit (userid, rowid, rowname, data, action, adminarea, fieldchanged, valuebefore, valueafter, created) 
-                values ({0},{1},'{2}','{3}',{4},{5},'{6}','{7}','{8}', @created) ", audit.UserId, audit.RowId, audit.RowName, audit.Data, (int)audit.Action, (int)audit.AdminArea, audit.FieldChanged, audit.ValueBefore, audit.ValueAfter);
+                values (@userid, @rowid, @rowname, @data, @action, @adminarea, @fieldchanged, @valuebefore, @valueafter, @created) ", audit.UserId, audit.RowId, audit.RowName, audit.Data, (int)audit.Action, (int)audit.AdminArea, audit.FieldChanged, audit.ValueBefore, audit.ValueAfter);
 
-            return SQLService.Instance.ExecuteQuery(query, new { created = DateTime.UtcNow });
+            return SQLService.Instance.ExecuteQuery(query, new { created = DateTime.UtcNow, userid = audit.UserId, rowid = audit.RowId, rowname = audit.RowName, data = audit.Data, action = (int)audit.Action, adminarea = (int)audit.AdminArea, fieldchanged = audit.FieldChanged, valuebefore = audit.ValueBefore, valueafter = audit.ValueAfter });
         }
 
         public static List<AdminAuditDto> GetAll(DateTime fromDate, DateTime toDate, UserContext userContext, List<int> userids = null)
