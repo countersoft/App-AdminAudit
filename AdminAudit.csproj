@@ -94,6 +94,7 @@
     <Compile Include="AdminAuditRepository.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="listener\BreezeListener.cs" />
+    <Compile Include="listener\ItemListener.cs" />
     <Compile Include="listener\SystemListener.cs" />
     <Compile Include="listener\SlaRulesListener.cs" />
     <Compile Include="listener\PeopleListener.cs" />

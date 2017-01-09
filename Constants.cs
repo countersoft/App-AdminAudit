@@ -53,6 +53,9 @@ namespace AdminAudit
         SystemAlertTemplates = 27,
         SystemActiveDirectory = 28,
         SystemLicensing = 29,
-        Organization = 30
+        Organization = 30,
+        
+        //Non Admin Areas:
+        Issue = 100
     }
 }
