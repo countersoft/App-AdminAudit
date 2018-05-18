@@ -74,6 +74,12 @@ namespace AdminAudit
 
         public void AfterUserUpdated(UserEventArgs args)
         {
+            if (args.User.Id == args.Entity.Id)
+            {
+                // We are chaning the same user so don't log as it's probably the user who has changed it (via profile).
+                return;
+            }
+
             List<Triplet> changedValues = new List<Triplet>();
 
             if (!args.Previous.Username.Equals(args.Entity.Username))
