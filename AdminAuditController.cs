@@ -16,7 +16,7 @@ using Countersoft.Gemini.Extensibility.Apps;
 using Countersoft.Gemini.Infrastructure.Apps;
 using Countersoft.Gemini.Commons.Dto;
 using System.Configuration;
-using NHibernate.Cfg.ConfigurationSchema;
+//using NHibernate.Cfg.ConfigurationSchema;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using Countersoft.Gemini.Commons.Meta;
